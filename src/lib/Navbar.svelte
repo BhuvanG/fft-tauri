@@ -9,7 +9,7 @@
 </script>
 
 <Router>
-  <div class="navbar">
+  <div class="navbar bg-base-200">
     <p class="my-auto text-red-500">442</p>
     <Link
       to="/"

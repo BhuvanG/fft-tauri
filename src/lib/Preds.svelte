@@ -81,44 +81,26 @@
   }
 
   async function handleDate() {
-    // let header: Record<string, any> = {
-    //   "X-Auth-Token": "49185e58260b4576ab876d47977111cc",
-    // };
-    // let httpopt: HttpOptions = {
-    //   method: "GET",
-    //   url: "https://api.football-data.org/v4/matches/?dateFrom=2023-08-08&dateTo=2023-08-14",
-    //   headers: header,
-    // };
+    let header: Record<string, any> = {
+      "X-Auth-Token": "49185e58260b4576ab876d47977111cc",
+    };
+    let httpopt: HttpOptions = {
+      method: "GET",
+      url: "https://api.football-data.org/v4/matches/?dateFrom=2023-08-08&dateTo=2023-08-14",
+      headers: header,
+    };
 
-    // let fetchopt: FetchOptions = {
-    //   method: "GET",
-    //   headers: header,
-    // };
-    // const response: any = await fetch(
-    //   "https://api.football-data.org/v4/matches/?dateFrom=2023-08-08&dateTo=2023-08-14",
-    //   fetchopt
-    // );
-    // matches = response.data.matches;
-    // matches.forEach((match) => {
-    //   if (leagues.includes(match.competition.name))
-    //     preds[match.id] = {
-    //       Azeem: "",
-    //       Neville: "",
-    //       Kautuk: "",
-    //       matchId: match.id,
-    //       homeTeam: match.homeTeam.name,
-    //       homeCrest: match.homeTeam.crest,
-    //       awayTeam: match.awayTeam.name,
-    //       awayCrest: match.awayTeam.crest,
-    //       date: match.utcDate,
-    //       check: false,
-    //     }; // setting the preds
-    // });
-    // showPreds = true;
-
-    matches = Fixtures.matches;
+    let fetchopt: FetchOptions = {
+      method: "GET",
+      headers: header,
+    };
+    const response: any = await fetch(
+      "https://api.football-data.org/v4/matches/?dateFrom=2023-08-08&dateTo=2023-08-14",
+      fetchopt
+    );
+    matches = response.data.matches;
     matches.forEach((match) => {
-      if (leagues.includes(match.competition.name)) {
+      if (leagues.includes(match.competition.name))
         preds[match.id] = {
           Azeem: "",
           Neville: "",
@@ -131,9 +113,27 @@
           date: match.utcDate,
           check: false,
         }; // setting the preds
-      }
     });
     showPreds = true;
+
+    // matches = Fixtures.matches;
+    // matches.forEach((match) => {
+    //   if (leagues.includes(match.competition.name)) {
+    //     preds[match.id] = {
+    //       Azeem: "",
+    //       Neville: "",
+    //       Kautuk: "",
+    //       matchId: match.id,
+    //       homeTeam: match.homeTeam.name,
+    //       homeCrest: match.homeTeam.crest,
+    //       awayTeam: match.awayTeam.name,
+    //       awayCrest: match.awayTeam.crest,
+    //       date: match.utcDate,
+    //       check: false,
+    //     }; // setting the preds
+    //   }
+    // });
+    // showPreds = true;
   }
 
   // changin color of status
@@ -172,7 +172,6 @@
       }
     });
   }
-  handleDate();
 </script>
 
 <div class="flex w-10/12 m-auto gap-5 my-5">
@@ -215,7 +214,9 @@
   <button class="btn btn-error">Reset</button>
 </div>
 
-<div class="grid grid-cols-newGrid border m-auto h-10 w-10/12 bg-slate-700">
+<div
+  class="grid grid-cols-newGrid text-black border m-auto h-10 w-10/12 bg-slate-700"
+>
   <p class="m-auto">Status</p>
   <p class="m-auto">Home Team</p>
   <p class="m-auto">Away Team</p>
@@ -226,67 +227,62 @@
     </div>
   {/each}
 </div>
-{#if showPreds}
-  {#each matches as match}
-    {#if match.competition.name == currentLeague}
-      <div
-        class="grid grid-cols-newGrid m-auto w-10/12 border bg-slate-800"
-        data-theme="dark"
-      >
-        <span
-          class="flex m-auto w-3 h-3 {preds[match.id].check
-            ? 'bg-lime-400'
-            : 'bg-slate-200'} rounded-full"
-        />
-        <div class="grid grid-cols-1 p-4 text-center">
-          <img class="m-auto w-7 h-7" src={match.homeTeam.crest} alt="" />
-          <p class="m-auto">{match.homeTeam.name}</p>
-        </div>
-        <div class="grid grid-cols-1 p-4 text-center">
-          <img class="m-auto w-7 h-7" src={match.awayTeam.crest} alt="" />
-          <p class="m-auto">{match.awayTeam.name}</p>
-        </div>
-        <div class="grid">
-          <p class="m-auto">
-            {moment.utc(match.utcDate).local().format("DD-MM-YYYY")}
-          </p>
-          <p class="m-auto">
-            {moment.utc(match.utcDate).local().format("dddd")}
-          </p>
-          <p class="m-auto">
-            {moment.utc(match.utcDate).local().format("HH:mm")}
-          </p>
-        </div>
-        {#each users as user, i}
-          <div
-            class="grid w-full h-full {user.color} {captain[user.name] ==
-            match.id
-              ? user.captainColor
-              : ''}"
-          >
-            <select
-              class="bg-slate-400 w-10/12 m-auto text-black"
-              name={user.name}
-              id={match.id}
-              bind:value={preds[match.id][user.name]}
-              on:change={() => checkStatus(match.id)}
-              data-theme="dracula"
-            >
-              <option value="" />
-              <option value="homeTeam"> {match.homeTeam.name}</option>
-              <option value="awayTeam">{match.awayTeam.name}</option>
-              <option value="draw">DRAW</option>
-            </select>
-            <button
-              class="m-auto w-4 h-4 text-white text-center text-xs bg-slate-800 shadow rounded"
-              on:click={() => handleCaptain(match.id, user.name)}>C</button
-            >
-          </div>
-        {/each}
+
+{#each matches || [] as match}
+  {#if match.competition.name == currentLeague}
+    <div class="grid grid-cols-newGrid m-auto w-10/12 border bg-slate-800">
+      <span
+        class="flex m-auto w-3 h-3 {preds[match.id].check
+          ? 'bg-lime-400'
+          : 'bg-slate-200'} rounded-full"
+      />
+      <div class="grid grid-cols-1 p-4 text-center">
+        <img class="m-auto w-7 h-7" src={match.homeTeam.crest} alt="" />
+        <p class="m-auto">{match.homeTeam.name}</p>
       </div>
-    {/if}
-  {/each}
-{/if}
+      <div class="grid grid-cols-1 p-4 text-center">
+        <img class="m-auto w-7 h-7" src={match.awayTeam.crest} alt="" />
+        <p class="m-auto">{match.awayTeam.name}</p>
+      </div>
+      <div class="grid">
+        <p class="m-auto">
+          {moment.utc(match.utcDate).local().format("DD-MM-YYYY")}
+        </p>
+        <p class="m-auto">
+          {moment.utc(match.utcDate).local().format("dddd")}
+        </p>
+        <p class="m-auto">
+          {moment.utc(match.utcDate).local().format("HH:mm")}
+        </p>
+      </div>
+      {#each users as user, i}
+        <div
+          class="grid w-full h-full {user.color} {captain[user.name] == match.id
+            ? user.captainColor
+            : ''}"
+        >
+          <select
+            class="bg-slate-400 w-10/12 m-auto text-black"
+            name={user.name}
+            id={match.id}
+            bind:value={preds[match.id][user.name]}
+            on:change={() => checkStatus(match.id)}
+            data-theme="dracula"
+          >
+            <option value="" />
+            <option value="homeTeam"> {match.homeTeam.name}</option>
+            <option value="awayTeam">{match.awayTeam.name}</option>
+            <option value="draw">DRAW</option>
+          </select>
+          <button
+            class="m-auto w-4 h-4 text-white text-center text-xs bg-slate-800 shadow rounded"
+            on:click={() => handleCaptain(match.id, user.name)}>C</button
+          >
+        </div>
+      {/each}
+    </div>
+  {/if}
+{/each}
 
 <style>
   .background-animate {

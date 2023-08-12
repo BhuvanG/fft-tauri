@@ -11,9 +11,11 @@
 </script>
 
 <div class="flex">
-  <div class="flex flex-col w--2/6">
+  <ul class=" menu bg-base-200 flex flex-col w-2/6 shadow-lg h-screen">
     {#each $predsContainer || [] as predContainer (predContainer.containerId)}
-      <li>{predContainer.containerId}, {predContainer.startDate}</li>
+      <div class="btn">
+        {predContainer.containerId}, {predContainer.startDate}
+      </div>
     {/each}
-  </div>
+  </ul>
 </div>
