@@ -1,1 +1,1 @@
-<div>HELLOW WORLD</div>
+<div class="flex-grow bg-green-400">HELLOW WORLD</div>

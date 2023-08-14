@@ -9,7 +9,7 @@
 </script>
 
 <Router>
-  <div class="navbar bg-base-200">
+  <div class="navbar sticky top-0 bg-base-200">
     <p class="my-auto text-red-500">442</p>
     <Link
       to="/"
@@ -36,7 +36,7 @@
       on:click={() => (activePage = "Results")}>Results</Link
     >
   </div>
-  <div>
+  <div class="flex flex-col flex-grow">
     <Route path="/">
       <Home />
     </Route>
