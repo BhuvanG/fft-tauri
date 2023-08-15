@@ -26,13 +26,6 @@
     .format("YYYY-MM-DD"); //getting the date after 10 days
   let currentLeague: string = "Premier League"; // setting the default league to Premier League
 
-  // setting the captain
-  // let captain: Captain = {
-  //   Azeem: 0,
-  //   Neville: 0,
-  //   Kautuk: 0,
-  // };
-
   // setting the users with name and color
   const users: User[] = [
     {
@@ -75,7 +68,6 @@
         }
       }
     }
-    console.log(preds);
   }
 
   function handleCaptain(id: number, user: string) {
@@ -88,6 +80,7 @@
     }
     console.log($predsCaptain[user]);
   }
+
   function reset() {
     // for (let id in preds) {
     //   preds[id].Azeem = "";
@@ -142,9 +135,6 @@
           Azeem: "",
           Neville: "",
           Kautuk: "",
-          AzeemCaptain: false,
-          NevilleCaptain: false,
-          KautukCaptain: false,
           matchId: match.id,
           homeTeam: match.homeTeam.name,
           homeCrest: match.homeTeam.crest,
@@ -184,12 +174,27 @@
             predCount: count,
             wagerCount: 0,
           });
+          await db.captain.add({
+            containerId: newContainer,
+            Azeem: $predsCaptain.Azeem,
+            Neville: $predsCaptain.Neville,
+            Kautuk: $predsCaptain.Kautuk,
+          });
           for (let pred in filteredPreds) {
             await db.pred.add({
               ...filteredPreds[pred],
               containerId: newContainer,
             });
           }
+          $preds = {};
+          $predsCaptain = {
+            Azeem: 0,
+            Neville: 0,
+            Kautuk: 0,
+          };
+          $matches = [];
+          $predsLeague = "Premier League";
+          $predsDate = new Date();
         } catch (err) {
           console.log(err);
         }
@@ -240,7 +245,7 @@
   </div>
 
   {#each $matches || [] as match}
-    {#if match.competition.name == currentLeague}
+    {#if match.competition.name == $predsLeague}
       <div class="grid grid-cols-newGrid m-auto w-10/12 border bg-slate-800">
         <span
           class="flex m-auto w-3 h-3 {preds[match.id].check
@@ -310,6 +315,7 @@
     100% {
       background-position: 0% 50%;
     }
+
     50% {
       background-position: 100% 50%;
     }

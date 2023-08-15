@@ -80,7 +80,7 @@
       {/each}
     </ul>
   </div>
-  <div class="w-3/4 overflow-auto">
+  <div class="w-3/4 overflow-auto my-10">
     <div
       class="grid grid-cols-newGrid text-center text-black border m-auto h-10 w-5/6 bg-slate-500"
     >

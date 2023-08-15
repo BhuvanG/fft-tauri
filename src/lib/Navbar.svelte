@@ -4,7 +4,6 @@
   import Counter from "./Counter.svelte";
   import Preds from "./Preds.svelte";
   import Results from "./Results.svelte";
-
   let activePage: string = "Home";
 </script>
 
