@@ -6,8 +6,9 @@
     type FetchOptions,
     type HttpOptions,
   } from "@tauri-apps/api/http";
+  import { onMount } from "svelte";
 
-  let preds: any;
+  let preds: any = [];
   let score: any = {};
 
   const users: User[] = [
@@ -30,47 +31,61 @@
         "bg-gradient-to-r from-green-100 via-yellow-200 to-sky-400 background-animate",
     },
   ];
+  let predsContainer: any;
 
-  let predsContainer: any = liveQuery(() => db.predContainer.toArray());
-  predsContainer.subscribe({
-    next: (predsContainer) => {
-      console.log("predsContainer", predsContainer);
-    },
+  onMount(async () => {
+    predsContainer = await db.predContainer.toArray();
   });
 
   async function showPreds(predContainerId: number) {
-    preds = liveQuery(() =>
-      db.pred.where("containerId").equals(predContainerId).toArray()
-    );
-    preds.subscribe({
-      next: async (arr_preds) => {
-        arr_preds.forEach(async (pred) => {
-          let header: Record<string, any> = {
-            "X-Auth-Token": "49185e58260b4576ab876d47977111cc",
-          };
+    preds = await db.pred
+      .where("containerId")
+      .equals(predContainerId)
+      .toArray();
 
-          let fetchopt: FetchOptions = {
-            method: "GET",
-            headers: header,
-          };
-          let response: any = await fetch(
-            `https://api.football-data.org/v4/matches/${pred.matchId}`,
-            fetchopt
-          );
-
-          score[pred.matchId] = response.data.score;
-          console.log(score[pred.matchId].fullTime.home);
-          console.log("score", score);
-        });
-      },
+    let container = await db.predContainer.get(predContainerId);
+    let startDate = container.startDate;
+    let endDate = container.endDate;
+    let idString: string = "";
+    preds.forEach((pred) => {
+      idString += pred.matchId + ",";
     });
+    idString = idString.slice(0, -1);
+    let header: Record<string, any> = {
+      "X-Auth-Token": "49185e58260b4576ab876d47977111cc",
+    };
+
+    let fetchopt: FetchOptions = {
+      method: "GET",
+      headers: header,
+    };
+    let httpString =
+      "https://api.football-data.org/v4/matches/?ids=" + idString;
+    console.log("httpString", httpString);
+    let response: any = await fetch(httpString, fetchopt);
+    let matches = response.data.matches;
+    // preds.subscribe({
+    //   next: async (arr_preds) => {
+    //     arr_preds.forEach(async (pred) => {
+    //       score[pred.matchId] = response.data.score;
+    //       console.log(score[pred.matchId].fullTime.home);
+    //       console.log("score", score);
+    //     });
+    //   },
+    // });
+    preds.forEach((pred) => {
+      score[pred.matchId] = matches.find(
+        (match) => match.id == pred.matchId
+      ).score;
+    });
+    console.log("score", score);
   }
 </script>
 
 <div class="flex" style="height: 92vh;">
   <div class="flex flex-col flex-grow w-1/4">
     <ul class="menu flex-grow bg-base-200 shadow-lg">
-      {#each $predsContainer || [] as predContainer (predContainer.containerId)}
+      {#each predsContainer || [] as predContainer (predContainer.containerId)}
         <button
           class="btn"
           on:click={() => showPreds(predContainer.containerId)}
@@ -94,7 +109,7 @@
         </div>
       {/each}
     </div>
-    {#each $preds || [] as pred (pred.matchId)}
+    {#each preds || [] as pred (pred.matchId)}
       <div
         class="grid grid-cols-newGrid text-center m-auto text-black border h-16 w-5/6 bg-slate-500"
       >
