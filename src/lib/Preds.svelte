@@ -4,13 +4,20 @@
   import Swal from "sweetalert2";
   import { db } from "./db/db.js";
   import {
+    preds,
+    predsDate,
+    predsLeague,
+    matches,
+    predsCaptain,
+  } from "./store.js";
+  import {
     fetch,
     type FetchOptions,
     type HttpOptions,
   } from "@tauri-apps/api/http";
 
-  let preds: Preds = {}; // setting the preds
-  let matches: any[]; // mathches need to be empty any array
+  // setting the preds
+  // mathches need to be empty any array
   let currentDate: string = moment(new Date()).format("YYYY-MM-DD"); //getting the current date
 
   // the football data api only allow interval to 10 days
@@ -20,11 +27,11 @@
   let currentLeague: string = "Premier League"; // setting the default league to Premier League
 
   // setting the captain
-  let captain: Captain = {
-    Azeem: 0,
-    Neville: 0,
-    Kautuk: 0,
-  };
+  // let captain: Captain = {
+  //   Azeem: 0,
+  //   Neville: 0,
+  //   Kautuk: 0,
+  // };
 
   // setting the users with name and color
   const users: User[] = [
@@ -63,21 +70,23 @@
     } else {
       preds[id].check = false;
       for (let user in users) {
-        if (captain[users[user].name] == id) {
-          captain[users[user].name] = 0;
+        if (predsCaptain[users[user].name] == id) {
+          predsCaptain[users[user].name] = 0;
         }
       }
     }
+    console.log(preds);
   }
 
   function handleCaptain(id: number, user: string) {
     if (preds[id].check == true) {
-      if (captain[user] == id) {
-        captain[user] = 0;
+      if ($predsCaptain[user] == id) {
+        $predsCaptain[user] = 0;
       } else {
-        captain[user] = id;
+        $predsCaptain[user] = id;
       }
     }
+    console.log($predsCaptain[user]);
   }
   function reset() {
     // for (let id in preds) {
@@ -86,10 +95,11 @@
     //   preds[id].Kautuk = "";
     //   preds[id].check = false;
     // }
-    matches = [];
+    $matches = [];
   }
 
   async function handleDate() {
+    $matches = [];
     // let header: Record<string, any> = {
     //   "X-Auth-Token": "49185e58260b4576ab876d47977111cc",
     // };
@@ -125,13 +135,16 @@
     // });
     // showPreds = true;
 
-    matches = Fixtures.matches;
-    matches.forEach((match) => {
+    $matches = Fixtures.matches;
+    $matches.forEach((match) => {
       if (leagues.includes(match.competition.name)) {
         preds[match.id] = {
           Azeem: "",
           Neville: "",
           Kautuk: "",
+          AzeemCaptain: false,
+          NevilleCaptain: false,
+          KautukCaptain: false,
           matchId: match.id,
           homeTeam: match.homeTeam.name,
           homeCrest: match.homeTeam.crest,
@@ -154,7 +167,11 @@
       denyButtonText: `Cancel`,
     }).then(async (result) => {
       if (result.isConfirmed) {
-        if (captain.Azeem == 0 || captain.Neville == 0 || captain.Kautuk == 0) {
+        if (
+          $predsCaptain.Azeem == 0 ||
+          $predsCaptain.Neville == 0 ||
+          $predsCaptain.Kautuk == 0
+        ) {
           Swal.fire("Please select a captain each player", "", "error");
           return;
         }
@@ -180,7 +197,6 @@
       }
     });
   }
-  handleDate();
 </script>
 
 <div class="overflow-auto">
@@ -192,13 +208,14 @@
         placeholder="Select date"
         min="2023-08-10"
         max={lastDate}
+        bind:value={$predsDate}
         on:change={handleDate}
       />
     </div>
     <select
       id="leagues"
       class="select select-bordered bg-cyan-500 text-black"
-      bind:value={currentLeague}
+      bind:value={$predsLeague}
     >
       {#each leagues as league}
         <option value={league}>{league}</option>
@@ -222,7 +239,7 @@
     {/each}
   </div>
 
-  {#each matches || [] as match}
+  {#each $matches || [] as match}
     {#if match.competition.name == currentLeague}
       <div class="grid grid-cols-newGrid m-auto w-10/12 border bg-slate-800">
         <span
@@ -251,7 +268,7 @@
         </div>
         {#each users as user, i}
           <div
-            class="grid w-full h-full {user.color} {captain[user.name] ==
+            class="grid w-full h-full {user.color} {$predsCaptain[user.name] ==
             match.id
               ? user.captainColor
               : ''}"

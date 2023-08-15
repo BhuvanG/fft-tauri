@@ -27,11 +27,11 @@ export interface dbPred {
   Azeem: string;
   Neville: string;
   Kautuk: string;
+
 }
 
 export class MySubClassedDexie extends Dexie {
   predContainer!: Table<dbPredContainer, number>;
-  captain!: Table<dbCaptain, number>;
   pred!: Table<dbPred, number>;
 
   constructor() {

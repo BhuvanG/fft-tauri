@@ -1,6 +1,14 @@
 <script lang="ts">
   import { db } from "./db/db.js";
   import { liveQuery } from "dexie";
+  import {
+    fetch,
+    type FetchOptions,
+    type HttpOptions,
+  } from "@tauri-apps/api/http";
+
+  let preds: any;
+  let score: any = {};
 
   const users: User[] = [
     {
@@ -23,20 +31,37 @@
     },
   ];
 
-  let preds: any;
   let predsContainer: any = liveQuery(() => db.predContainer.toArray());
   predsContainer.subscribe({
     next: (predsContainer) => {
       console.log("predsContainer", predsContainer);
     },
   });
+
   async function showPreds(predContainerId: number) {
     preds = liveQuery(() =>
       db.pred.where("containerId").equals(predContainerId).toArray()
     );
     preds.subscribe({
-      next: (preds) => {
-        console.log("preds", preds);
+      next: async (arr_preds) => {
+        arr_preds.forEach(async (pred) => {
+          let header: Record<string, any> = {
+            "X-Auth-Token": "49185e58260b4576ab876d47977111cc",
+          };
+
+          let fetchopt: FetchOptions = {
+            method: "GET",
+            headers: header,
+          };
+          let response: any = await fetch(
+            `https://api.football-data.org/v4/matches/${pred.matchId}`,
+            fetchopt
+          );
+
+          score[pred.matchId] = response.data.score;
+          console.log(score[pred.matchId].fullTime.home);
+          console.log("score", score);
+        });
       },
     });
   }
@@ -62,7 +87,7 @@
       <p class="m-auto">Status</p>
       <p class="m-auto">Home Team</p>
       <p class="m-auto">Away Team</p>
-      <p class="m-auto">Date</p>
+      <p class="m-auto">Score</p>
       {#each users as user, i}
         <div class="grid m-auto w-full h-full {user.color}">
           <p class="m-auto">{user.name}</p>
@@ -76,7 +101,13 @@
         <p class="m-auto">*</p>
         <p class="m-auto">{pred.homeTeam}</p>
         <p class="m-auto">{pred.awayTeam}</p>
-        <p class="m-auto">{pred.utcDate}</p>
+        <p class="m-auto">
+          {score[pred.matchId]
+            ? score[pred.matchId].fullTime.home +
+              " - " +
+              score[pred.matchId].fullTime.away
+            : ""}
+        </p>
         {#each users as user, i}
           <div class="grid m-auto w-full h-full {user.color}">
             <p class="m-auto">
