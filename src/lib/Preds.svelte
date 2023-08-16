@@ -56,7 +56,9 @@
     "UEFA Champions League",
   ];
 
-  // getting data when date changes
+  // checking the status of the pred
+  // if all the users have selected the pred then it will be true
+  // else it will be false
   function checkStatus(id: number) {
     if (preds[id].Azeem && preds[id].Neville && preds[id].Kautuk) {
       preds[id].check = true;
@@ -69,7 +71,9 @@
       }
     }
   }
-
+  //  setting the captain
+  //  if the captain is already selected then it will be unselected
+  // else it will be selected
   function handleCaptain(id: number, user: string) {
     if (preds[id].check == true) {
       if ($predsCaptain[user] == id) {
@@ -91,6 +95,12 @@
     $matches = [];
   }
 
+  // the api only allows 10 days interval
+  // we select from current date to 10 days after
+  // we filter the matches by the leagues
+  // we set the preds to initial state
+  // we set the captain to initial state
+  // we set the matches to the matches we got from the api
   async function handleDate() {
     $matches = [];
     // let header: Record<string, any> = {
@@ -142,13 +152,18 @@
           awayCrest: match.awayTeam.crest,
           date: match.utcDate,
           check: false,
-        }; // setting the preds
+        };
       }
     });
   }
 
-  // changin color of status
-
+  // submit the preds to the database
+  // first we check if the captain is selected for each user
+  // if not then we show an error
+  // else we submit the preds to the database
+  // we set the preds to initial state
+  // we set the captain to initial state
+  // we set the matches to initial state
   async function submitPreds() {
     Swal.fire({
       title: "Do you want to save the changes?",
@@ -182,7 +197,7 @@
           });
           for (let pred in filteredPreds) {
             await db.pred.add({
-              ...filteredPreds[pred],
+              ...filteredPreds[pred], // spread operator is needed to copy the object
               containerId: newContainer,
             });
           }

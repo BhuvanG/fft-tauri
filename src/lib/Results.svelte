@@ -114,7 +114,9 @@
         class="grid grid-cols-newGrid text-center m-auto text-black border h-16 w-5/6 bg-slate-500"
       >
         <p class="m-auto">*</p>
+        <img class="m-auto w-7 h-7" src={pred.homeTeam.crest} alt="" />
         <p class="m-auto">{pred.homeTeam}</p>
+        <img class="m-auto w-7 h-7" src={pred.homeTeam.crest} alt="" />
         <p class="m-auto">{pred.awayTeam}</p>
         <p class="m-auto">
           {score[pred.matchId]
