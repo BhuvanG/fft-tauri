@@ -129,7 +129,7 @@
       {/if}
     </div>
     <div
-      class="grid grid-cols-newGrid text-center text-black border m-auto h-10 w-11/12 bg-slate-500"
+      class="grid grid-cols-newGrid text-center text-black border border-lime-500 m-auto h-10 w-11/12 bg-slate-500"
     >
       <p class="m-auto">Status</p>
       <p class="m-auto">Home Team</p>
@@ -143,7 +143,7 @@
     </div>
     {#each preds || [] as pred (pred.matchId)}
       <div
-        class="grid grid-cols-newGrid text-center m-auto text-black border w-11/12 bg-slate-500"
+        class="grid grid-cols-newGrid h-24 text-center m-auto text-black border border-lime-500 w-11/12 bg-slate-500"
       >
         <p class="m-auto">*</p>
         <div class="grid grid-cols-1 p-4 text-center">
@@ -168,13 +168,24 @@
               ? user.captainColor
               : ''}"
           >
-            <p class="m-auto">
-              {pred[user.name] == "homeTeam"
-                ? pred.homeTeam
-                : pred[user.name] == "awayTeam"
-                ? pred.awayTeam
-                : "Draw"}
-            </p>
+            <div class="m-auto h-1/2">
+              <img
+                class="m-auto w-7 h-7"
+                src={pred[user.name] == "homeTeam"
+                  ? pred.homeCrest
+                  : pred[user.name] == "awayTeam"
+                  ? pred.awayCrest
+                  : ""}
+                alt=""
+              />
+              <p class="m-auto">
+                {pred[user.name] == "homeTeam"
+                  ? pred.homeTeam
+                  : pred[user.name] == "awayTeam"
+                  ? pred.awayTeam
+                  : "Draw"}
+              </p>
+            </div>
           </div>
         {/each}
       </div>

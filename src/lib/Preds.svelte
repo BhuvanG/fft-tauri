@@ -16,6 +16,7 @@
     type HttpOptions,
   } from "@tauri-apps/api/http";
 
+  let check = {};
   // setting the preds
   // mathches need to be empty any array
   let currentDate: string = moment(new Date()).format("YYYY-MM-DD"); //getting the current date
@@ -61,14 +62,17 @@
   function checkStatus(id: number) {
     if (preds[id].Azeem && preds[id].Neville && preds[id].Kautuk) {
       preds[id].check = true;
+      check[id] = true;
     } else {
       preds[id].check = false;
+      check[id] = false;
       for (let user in users) {
-        if (predsCaptain[users[user].name] == id) {
-          predsCaptain[users[user].name] = 0;
+        if ($predsCaptain[users[user].name] == id) {
+          $predsCaptain[users[user].name] = 0;
         }
       }
     }
+    console.log(preds[id]);
   }
   //  setting the captain
   //  if the captain is already selected then it will be unselected
@@ -81,7 +85,6 @@
         $predsCaptain[user] = id;
       }
     }
-    console.log($predsCaptain[user]);
   }
 
   function reset() {
@@ -152,6 +155,7 @@
           date: match.utcDate,
           check: false,
         };
+        check[match.id] = false;
       }
     });
   }
@@ -247,7 +251,7 @@
   </div>
 
   <div
-    class="grid grid-cols-newGrid text-black border m-auto h-10 w-10/12 bg-slate-500"
+    class="grid grid-cols-newGrid text-black border border-lime-500 m-auto h-10 w-10/12 bg-slate-500"
   >
     <p class="m-auto">Status</p>
     <p class="m-auto">Home Team</p>
@@ -262,9 +266,11 @@
 
   {#each $matches || [] as match}
     {#if match.competition.name == $predsLeague}
-      <div class="grid grid-cols-newGrid m-auto w-10/12 border bg-slate-800">
+      <div
+        class="grid grid-cols-newGrid m-auto w-10/12 border border-lime-500 bg-slate-800"
+      >
         <span
-          class="flex m-auto w-3 h-3 {preds[match.id].check
+          class="flex m-auto w-3 h-3 {check[match.id]
             ? 'bg-lime-400'
             : 'bg-slate-200'} rounded-full"
         />
