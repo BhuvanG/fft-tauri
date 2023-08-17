@@ -24,7 +24,6 @@
   let lastDate: string = moment(new Date())
     .add(10, "days")
     .format("YYYY-MM-DD"); //getting the date after 10 days
-  let currentLeague: string = "Premier League"; // setting the default league to Premier League
 
   // setting the users with name and color
   const users: User[] = [
@@ -188,6 +187,7 @@
             endDate: "2023-08-14",
             predCount: count,
             wagerCount: 0,
+            completed: false,
           });
           await db.captain.add({
             containerId: newContainer,
@@ -199,6 +199,7 @@
             await db.pred.add({
               ...filteredPreds[pred], // spread operator is needed to copy the object
               containerId: newContainer,
+              completed: false,
             });
           }
           $preds = {};
@@ -317,6 +318,7 @@
 </div>
 
 <style>
+  /* animating the captained pred background */
   .background-animate {
     background-size: 400%;
 

@@ -5,6 +5,7 @@ export default {
     extend: {
       gridTemplateColumns: {
         'newGrid': '0.8fr 2fr 2fr 2fr 2fr 2fr 2fr',
+        'resultGrid': '',
       }
     },
   },

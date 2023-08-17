@@ -6,6 +6,7 @@ export interface dbPredContainer {
   endDate: string;
   predCount: number;
   wagerCount: number;
+  completed: boolean;
 }
 
 export interface dbCaptain {
@@ -27,6 +28,7 @@ export interface dbPred {
   Azeem: string;
   Neville: string;
   Kautuk: string;
+  completed: boolean;
 }
 
 export class MySubClassedDexie extends Dexie {
@@ -37,9 +39,9 @@ export class MySubClassedDexie extends Dexie {
   constructor() {
     super("fttDatabase");
     this.version(1).stores({
-      predContainer: "++containerId, startDate, endDate, predCount, wagerCount",
+      predContainer: "++containerId, startDate, endDate, predCount, wagerCount, completed",
       captain: "++captainId, containerId, Azeem, Neville, Kautuk",
-      pred: "matchId,containerId, date, homeTeam, homeCrest, awayTeam, awayCrest, Azeem, Neville, Kautuk",
+      pred: "matchId,containerId, date, homeTeam, homeCrest, awayTeam, awayCrest, Azeem, Neville, Kautuk, completed",
     });
   }
 }
