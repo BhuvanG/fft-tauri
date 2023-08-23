@@ -15,7 +15,8 @@
     "dexie": "^3.2.4",
     "moment": "^2.29.4",
     "svelte-routing": "^2.0.0",
-    "sweetalert2": "^11.7.20"
+    "sweetalert2": "^11.7.20",
+    "tauri-plugin-sql-api": "github:tauri-apps/tauri-plugin-sql#v1"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.4.2",

@@ -16,7 +16,6 @@
     type HttpOptions,
   } from "@tauri-apps/api/http";
 
-  let check = {};
   // setting the preds
   // mathches need to be empty any array
   let currentDate: string = moment(new Date()).format("YYYY-MM-DD"); //getting the current date
@@ -56,9 +55,17 @@
     "UEFA Champions League",
   ];
 
+  let check: any = {};
+
+  if ($matches.length != 0) {
+    for (let pred in preds) {
+      check[preds[pred].matchId] = preds[pred].check;
+    }
+  }
   // checking the status of the pred
   // if all the users have selected the pred then it will be true
   // else it will be false
+
   function checkStatus(id: number) {
     if (preds[id].Azeem && preds[id].Neville && preds[id].Kautuk) {
       preds[id].check = true;
@@ -122,9 +129,9 @@
     //   "https://api.football-data.org/v4/matches/?dateFrom=2023-08-08&dateTo=2023-08-14",
     //   fetchopt
     // );
-    // matches = response.data.matches;
-    // matches.forEach((match) => {
-    //   if (leagues.includes(match.competition.name))
+    // $matches = response.data.matches;
+    // $matches.forEach((match) => {
+    //   if (leagues.includes(match.competition.name)) {
     //     preds[match.id] = {
     //       Azeem: "",
     //       Neville: "",
@@ -137,8 +144,9 @@
     //       date: match.utcDate,
     //       check: false,
     //     }; // setting the preds
+    //     check[match.id] = preds[match.id].check;
+    //   }
     // });
-    // showPreds = true;
 
     $matches = Fixtures.matches;
     $matches.forEach((match) => {
@@ -155,7 +163,7 @@
           date: match.utcDate,
           check: false,
         };
-        check[match.id] = false;
+        check[match.id] = preds[match.id].check;
       }
     });
   }
